@@ -35,25 +35,11 @@ public class Task {
         this.status = status;
     }
 
+    public LocalDateTime getCreatedAt() { return  createdAt;}
+    public LocalDateTime getUpdatedAt() { return  updatedAt;}
+
     public void touch(){
         this.updatedAt = LocalDateTime.now();
-    }
-
-    public String toJson() {
-        return String.format(
-                "{" +
-                        "\"id\":%d," +
-                        "\"description\":\"%s\"," +
-                        "\"status\":\"%s\"," +
-                        "\"createdAt\":\"%s\"," +
-                        "\"updatedAt\":\"%s\"" +
-                        "}",
-                id,
-                escape(description),
-                status,
-                createdAt,
-                updatedAt
-        );
     }
 
     @Override
