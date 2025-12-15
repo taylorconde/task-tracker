@@ -1,7 +1,6 @@
 package br.com.taylor.service;
 
 import br.com.taylor.entity.Task;
-import br.com.taylor.enums.TaskStatus;
 import br.com.taylor.repository.TaskRepository;
 
 import java.util.List;
@@ -10,31 +9,53 @@ public class TaskService {
 
     private final TaskRepository repository;
 
-    public TaskService() {
-        this.repository = new TaskRepository();
+    public TaskService(String filePath){
+        this.repository = new TaskRepository(filePath);
     }
 
-    public Task crateTask(String description, TaskStatus status) {
-        return null;
+    public TaskService(TaskRepository repository) {
+        this.repository = repository;
     }
 
-    public Task updateTask(int id, String description, TaskStatus status) {
-        return null;
+    public Task create(Task task) {
+        return repository.save(task);
     }
 
-    public Task updateStatus(int id, TaskStatus status) {
-        return null;
+    public Task findById(Long id) {
+        Task found = repository.findById(id);
+        if (found == null) throw new RuntimeException("Task not found: " + id);
+        return found;
     }
 
-    public boolean deleteTask(int id) {
-        return false;
+    public List<Task> findAll() {
+        return repository.findAll();
     }
 
-    public List<Task> listAll() {
-        return null;
+    public Task update(Long id, Task newData){
+        Task existing = repository.findById(id);
+
+        if (existing == null) return null;
+
+        if (newData.getDescription() != null) {
+            existing.setDescription(newData.getDescription());
+        }
+
+        if (newData.getStatus() != null) {
+            existing.setStatus(newData.getStatus());
+        }
+
+        existing.touch();
+
+        if (!repository.update(id, existing))
+            return null;
+
+        return existing;
     }
 
-    public List<Task> listByStatus(TaskStatus status) {
-        return null;
+    public boolean delete(Long id) {
+        Task found = repository.findById(id);
+        if (found == null) throw new RuntimeException("Task not found: " + id);
+
+        return repository.delete(id);
     }
 }

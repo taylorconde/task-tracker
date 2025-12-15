@@ -106,7 +106,6 @@ public class TaskSerializer {
 
             tasks.add(task);
         }
-
         return tasks;
     }
 }

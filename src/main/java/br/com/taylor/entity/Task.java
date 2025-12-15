@@ -28,6 +28,10 @@ public class Task {
     public String getDescription(){return description;}
     public TaskStatus getStatus(){return status;}
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public void setDescription(String description){
         this.description = description;
     }
