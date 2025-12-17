@@ -3,6 +3,7 @@ package br.com.taylor.service;
 import br.com.taylor.entity.Task;
 import br.com.taylor.repository.TaskRepository;
 
+import java.io.IOException;
 import java.util.List;
 
 public class TaskService {
@@ -32,22 +33,15 @@ public class TaskService {
     }
 
     public Task update(Long id, Task newData){
-        Task existing = repository.findById(id);
 
-        if (existing == null) return null;
+        Task existing = this.findById(id);
 
-        if (newData.getDescription() != null) {
-            existing.setDescription(newData.getDescription());
-        }
-
-        if (newData.getStatus() != null) {
-            existing.setStatus(newData.getStatus());
-        }
+        if (newData.getDescription() != null) existing.setDescription(newData.getDescription());
+        if (newData.getStatus() != null) existing.setStatus(newData.getStatus());
 
         existing.touch();
 
-        if (!repository.update(id, existing))
-            return null;
+        if (!repository.update(id, existing)) throw new RuntimeException();
 
         return existing;
     }

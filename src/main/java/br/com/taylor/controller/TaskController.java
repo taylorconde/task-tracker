@@ -108,12 +108,13 @@ public class TaskController implements HttpHandler {
             return;
         }
 
-        var updated = service.update(id, newData.get(0));
-        if (updated == null) {
-            send(exchange, 404, "{\"error\":\"ID not found\"}");
-            return;
+        try {
+            var updated = service.update(id, newData.get(0));
+            send(exchange, 200, TaskSerializer.toJson(updated));
+
+        } catch (RuntimeException e){
+            send(exchange, 404, "{\"error\":\"" + e.getMessage() + "\"}");
         }
-        send(exchange, 200, TaskSerializer.toJson(updated));
     }
 
     private void handleDelete(HttpExchange exchange, Long id) throws IOException{
