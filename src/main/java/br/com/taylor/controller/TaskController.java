@@ -32,7 +32,7 @@ public class TaskController implements HttpHandler {
 
         // Rotas com ID (/tasks/{id})
         routes.put("GET:/tasks/:id", this::handleFindByID);
-        routes.put("PUT:/tasks/:id", this::handleUpdate);
+        routes.put("PATCH:/tasks/:id", this::handleUpdate);
         routes.put("DELETE:/tasks/:id", this::handleDelete);
     }
 
@@ -88,8 +88,8 @@ public class TaskController implements HttpHandler {
 
     private void handleCreate(HttpExchange exchange, Long id) throws IOException{
         String body = readBody(exchange);
-
         List<Task> tasks = TaskSerializer.fromJson(body);
+
         if(tasks.isEmpty()) {
             send(exchange, 400, "{\"error\":\"Invalid body\"}");
             return;
@@ -152,25 +152,3 @@ public class TaskController implements HttpHandler {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

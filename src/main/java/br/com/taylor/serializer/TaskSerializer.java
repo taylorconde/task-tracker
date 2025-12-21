@@ -11,14 +11,25 @@ import static br.com.taylor.utils.JsonUtils.escape;
 
 public class TaskSerializer {
 
+//    public static String toJson(Task task) {
+//        return "{"
+//                + "\"id\":" + task.getId() + ","
+//                + "\"description\":\"" + escape(task.getDescription()) + "\","
+//                + "\"status\":\"" + task.getStatus().name() + "\","
+//                + "\"createdAt\":\"" + task.getCreatedAt() + "\","
+//                + "\"updatedAt\":\"" + task.getUpdatedAt() + "\""
+//                + "}";
+//    }
     public static String toJson(Task task) {
-        return "{"
-                + "\"id\":" + task.getId() + ","
-                + "\"description\":\"" + escape(task.getDescription()) + "\","
-                + "\"status\":\"" + task.getStatus().name() + "\","
-                + "\"createdAt\":\"" + task.getCreatedAt() + "\","
-                + "\"updatedAt\":\"" + task.getUpdatedAt() + "\""
-                + "}";
+        StringBuilder sb = new StringBuilder();
+        sb.append("{");
+        sb.append("\"id\":").append(task.getId()).append(",");
+        sb.append("\"description\":\"").append(escape(task.getDescription())).append("\",");
+        sb.append("\"status\":\"").append(task.getStatus()).append("\",");
+        sb.append("\"createdAt\":\"").append(task.getCreatedAt()).append("\",");
+        sb.append("\"updatedAt\":\"").append(task.getUpdatedAt()).append("\"");
+        sb.append("}");
+        return sb.toString();
     }
 
     public static String toJson(List<Task> tasks) {
@@ -47,29 +58,58 @@ public class TaskSerializer {
         if (json.startsWith("[")) json = json.substring(1);
         if (json.endsWith("]")) json = json.substring(0, json.length() - 1);
 
+        if(json.isBlank()) return tasks;
         // separa objetos
         String[] items = json.split("\\},\\{");
 
         for (String raw : items) {
+
             String obj = raw.trim();
+
             if (!obj.startsWith("{")) obj = "{" + obj;
             if (!obj.endsWith("}")) obj = obj + "}";
 
             // remove chaves
             obj = obj.substring(1, obj.length() - 1);
 
-            String[] fields = obj.split(",");
+            StringBuilder palavraAtual = new StringBuilder();
+            List<String> fields = new ArrayList<>();
+
+            char[] chars = obj.toCharArray();
+            boolean dentroDeAspas = false;
+
+            for (char c : chars) {
+                if(c == '\"') dentroDeAspas = !dentroDeAspas;
+
+                if(c == ',' && !dentroDeAspas) {
+                    fields.add(palavraAtual.toString());
+                    palavraAtual.setLength(0);
+                }
+                else {
+                    palavraAtual.append(c);
+                }
+            }
+            if(!palavraAtual.isEmpty()){
+                fields.add(palavraAtual.toString());
+                palavraAtual.setLength(0);
+            }
 
             int id = 0;
-            String description = "";
-            TaskStatus status = TaskStatus.TODO;
+            String description = null;
+            TaskStatus status = null;
             LocalDateTime createdAt = null;
             LocalDateTime updatedAt = null;
 
             for (String f : fields) {
+
+
                 String[] kv = f.split(":", 2);
-                String key = kv[0].replace("\"", "").trim();
-                String value = kv[1].replace("\"", "").trim();
+
+                String key = kv[0].trim();
+                String value = kv[1].trim();
+
+                key = (key.startsWith("\"") && key.endsWith("\"")) ? key.substring(1, key.length() - 1) : key;
+                value = (value.startsWith("\"") && value.endsWith("\"")) ? value.substring(1, value.length() - 1) : value;
 
                 switch (key) {
                     case "id":

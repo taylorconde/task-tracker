@@ -3,16 +3,11 @@ package br.com.taylor.service;
 import br.com.taylor.entity.Task;
 import br.com.taylor.repository.TaskRepository;
 
-import java.io.IOException;
 import java.util.List;
 
 public class TaskService {
 
     private final TaskRepository repository;
-
-    public TaskService(String filePath){
-        this.repository = new TaskRepository(filePath);
-    }
 
     public TaskService(TaskRepository repository) {
         this.repository = repository;

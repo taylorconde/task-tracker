@@ -4,8 +4,6 @@ import br.com.taylor.enums.TaskStatus;
 
 import java.time.LocalDateTime;
 
-import static br.com.taylor.utils.JsonUtils.escape;
-
 
 public class Task {
 

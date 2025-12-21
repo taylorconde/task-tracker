@@ -18,8 +18,18 @@ public class JsonUtils {
 
     public static void writeFile(String path, String content) {
         try {
+            java.nio.file.Path filePath = java.nio.file.Paths.get(path);
+
+            // Capturar diretório pai
+            java.nio.file.Path parentDir = filePath.getParent();
+
+            // Verifica se o diretório pai é nulo e se não existe, e o cria se não existir
+            if(parentDir != null && !java.nio.file.Files.exists(parentDir))
+            {
+                java.nio.file.Files.createDirectories(parentDir);
+            }
             java.nio.file.Files.write(
-                    java.nio.file.Paths.get(path),
+                    filePath,
                     content.getBytes(),
                     StandardOpenOption.CREATE,
                     StandardOpenOption.TRUNCATE_EXISTING
