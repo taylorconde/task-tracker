@@ -1,6 +1,7 @@
 package br.com.taylor.controller;
 
 import br.com.taylor.entity.Task;
+import br.com.taylor.enums.TaskStatus;
 import br.com.taylor.serializer.TaskSerializer;
 import br.com.taylor.service.TaskService;
 import com.sun.net.httpserver.HttpExchange;
@@ -34,6 +35,7 @@ public class TaskController implements HttpHandler {
         routes.put("GET:/tasks/:id", this::handleFindByID);
         routes.put("PATCH:/tasks/:id", this::handleUpdate);
         routes.put("DELETE:/tasks/:id", this::handleDelete);
+
     }
 
     @Override
@@ -72,9 +74,32 @@ public class TaskController implements HttpHandler {
         send(exchange, 404, "{\"error\":\"Not Found\"}");
     }
 
-    private void handleFindAll(HttpExchange exchange, Long id) throws IOException{
+    private void handleFindAll(HttpExchange exchange, Long id) throws IOException {
+        //  Captura a query (ex: "status=TODO")
+        String query = exchange.getRequestURI().getQuery();
+
+        // Se tiver filtro de status, delega para o método específico
+        if (query != null && query.contains("status=")) {
+            handleFindByStatus(exchange, query);
+            return; // Encerra aqui para não listar tudo
+        }
+
+        // 3. Fluxo normal (sem filtro)
         var list = service.findAll();
         send(exchange, 200, TaskSerializer.toJson(list));
+    }
+
+    private void handleFindByStatus(HttpExchange exchange, String query) throws IOException {
+        try {
+            String statusParam = query.split("=")[1].toUpperCase();
+            TaskStatus status = TaskStatus.valueOf(statusParam);
+
+            List<Task> filteredTasks = service.findByStatus(status);
+
+            send(exchange, 200, TaskSerializer.toJson(filteredTasks));
+        } catch (Exception e) {
+            send(exchange, 400, "Status inválido. Opções: TODO, IN_PROGRESS, DONE");
+        }
     }
 
     private void handleFindByID(HttpExchange exchange, Long id) throws IOException{
