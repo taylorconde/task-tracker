@@ -75,7 +75,7 @@ public class TaskController implements HttpHandler {
     }
 
     private void handleFindAll(HttpExchange exchange, Long id) throws IOException {
-        //  Captura a query (ex: "status=TODO")
+
         String query = exchange.getRequestURI().getQuery();
 
         // Se tiver filtro de status, delega para o método específico
@@ -117,6 +117,14 @@ public class TaskController implements HttpHandler {
 
         if(tasks.isEmpty()) {
             send(exchange, 400, "{\"error\":\"Invalid body\"}");
+            return;
+        }
+        if(tasks.getFirst().getStatus() == null) {
+            send(exchange, 400, "{\"error\":\"Status is required\"}");
+            return;
+        }
+        if(tasks.getFirst().getDescription().isBlank()) {
+            send(exchange, 400, "{\"error\":\"Description is required\"}");
             return;
         }
 
