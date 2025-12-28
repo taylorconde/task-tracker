@@ -17,7 +17,7 @@ public class TaskHttpServer {
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
 
         // Mapear a rota raiz das tarefas para o nosso controller
-        server.createContext("/tasks", taskController);
+        server.createContext("/", taskController);
 
         server.setExecutor(null);
         server.start();

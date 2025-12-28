@@ -4,6 +4,7 @@ import br.com.taylor.entity.Task;
 import br.com.taylor.enums.TaskStatus;
 import br.com.taylor.serializer.TaskSerializer;
 import br.com.taylor.service.TaskService;
+import br.com.taylor.utils.JsonUtils;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
@@ -28,6 +29,7 @@ public class TaskController implements HttpHandler {
         this.service = service;
 
         // Rotas sem ID
+        routes.put("GET:/", this::handleHome);
         routes.put("GET:/tasks", this::handleFindAll);
         routes.put("POST:/tasks", this::handleCreate);
 
@@ -35,7 +37,12 @@ public class TaskController implements HttpHandler {
         routes.put("GET:/tasks/:id", this::handleFindByID);
         routes.put("PATCH:/tasks/:id", this::handleUpdate);
         routes.put("DELETE:/tasks/:id", this::handleDelete);
+        
+        // Rota para JS
+        routes.put("GET:/js/", this::handleJavaScript);
+    }
 
+    private void handleJavaScript(HttpExchange exchange, Long aLong) {
     }
 
     @Override
@@ -46,13 +53,19 @@ public class TaskController implements HttpHandler {
 
         String key = method + ":" + path;
 
-        // Caso 1: rota direta (/tasks)
+        // Caso 1: rota para JavaScript
+        if (method.equals("GET") && path.startsWith("/js/") || path.startsWith("/css/")) {
+            handleStaticFile(exchange, path);
+            return;
+        }
+
+        // Caso 2: rota direta (/tasks)
         if (routes.containsKey(key)) {
             routes.get(key).handle(exchange, null);
             return;
         }
 
-        // Caso 2: rota com id (/tasks/{id})
+        // Caso 3: rota com id (/tasks/{id})
         if (path.startsWith("/tasks/")) {
             String idStr = path.substring("/tasks/".length());
 
@@ -72,6 +85,28 @@ public class TaskController implements HttpHandler {
         }
 
         send(exchange, 404, "{\"error\":\"Not Found\"}");
+    }
+
+    private void handleHome(HttpExchange exchange, Long aLong) throws IOException {
+        String body = JsonUtils.readFile("public/index.html");
+        send(exchange,200, body,"text/html");
+    }
+
+    private void handleStaticFile(HttpExchange exchange, String path) throws IOException {
+        String filePath = "public" + path;
+        String contentType = null;
+
+        if (filePath.endsWith(".html")) {
+            contentType = "text/html";
+        } else {
+            contentType = (filePath.endsWith(".js")) ? "text/javascript" : "text/css";
+        }
+        try {
+            String content = JsonUtils.readFile(filePath);
+            send(exchange, 200, content, contentType);
+        } catch (Exception e) {
+            send(exchange, 404, "Caminho não encontrado " + filePath);
+        }
     }
 
     private void handleFindAll(HttpExchange exchange, Long id) throws IOException {
@@ -172,12 +207,18 @@ public class TaskController implements HttpHandler {
     }
 
     private void send(HttpExchange exchange, int status, String content) throws IOException {
+
+        String contentType = "application/json";
+        send(exchange, status, content, contentType);
+    }
+
+    private void send(HttpExchange exchange, int status, String content, String contentType) throws IOException {
         byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
 
-        if (bytes.length == 0) {
+        if(bytes.length == 0) {
             exchange.sendResponseHeaders(status, -1);
         } else {
-            exchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
+            exchange.getResponseHeaders().set("Content-Type", contentType + "; charset=utf-8");
             exchange.sendResponseHeaders(status, bytes.length);
             try (OutputStream os = exchange.getResponseBody()) {
                 os.write(bytes);
