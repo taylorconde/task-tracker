@@ -33,7 +33,7 @@ public class TaskService {
 
         Task existing = this.findById(id);
 
-        if (!newData.getDescription().isBlank()) existing.setDescription(newData.getDescription());
+        if (newData.getDescription() != null && !newData.getDescription().isBlank()) existing.setDescription(newData.getDescription());
         if (newData.getStatus() != null) existing.setStatus(newData.getStatus());
 
         existing.touch();
