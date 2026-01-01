@@ -33,8 +33,14 @@ function loadTasks() {
                 descInput.value = task.description;
 
                 descInput.addEventListener('change', () => {
-                    updateTask(task.id, { description: descInput.value })
-                })
+
+                    if (descInput.value.trim() !== "") {
+                        updateTask(task.id, { description: descInput.value })
+                    } else {
+                        alert('A descrição da tarefa não pode ser em branco!');
+                        descInput.value = task.description;
+                    };
+                });
 
                 const statusSelect = document.createElement('select');
                 statusSelect.innerHTML = `
