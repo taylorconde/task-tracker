@@ -2,16 +2,16 @@ package br.com.taylor.service;
 
 import br.com.taylor.entity.Task;
 import br.com.taylor.enums.TaskStatus;
-import br.com.taylor.repository.TaskRepository;
+import br.com.taylor.repository.JsonTaskRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TaskService {
 
-    private final TaskRepository repository;
+    private final JsonTaskRepository repository;
 
-    public TaskService(TaskRepository repository) {
+    public TaskService(JsonTaskRepository repository) {
         this.repository = repository;
     }
 

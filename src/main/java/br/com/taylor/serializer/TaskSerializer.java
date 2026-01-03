@@ -142,7 +142,9 @@ public class TaskSerializer {
                 var f2 = Task.class.getDeclaredField("updatedAt");
                 f2.setAccessible(true);
                 f2.set(task, updatedAt);
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             tasks.add(task);
         }

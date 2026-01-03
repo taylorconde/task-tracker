@@ -1,7 +1,7 @@
  package br.com.taylor.application;
 
  import br.com.taylor.controller.TaskController;
- import br.com.taylor.repository.TaskRepository;
+ import br.com.taylor.repository.JsonTaskRepository;
  import br.com.taylor.server.TaskHttpServer;
  import br.com.taylor.service.TaskService;
 
@@ -13,7 +13,7 @@ public class Main {
         String path = "data/"+"task.json";
         int port = 8080;
 
-        TaskRepository repository = new TaskRepository(path);
+        JsonTaskRepository repository = new JsonTaskRepository(path);
         TaskService service = new TaskService(repository);
         TaskController controller = new TaskController(service);
         TaskHttpServer server = new TaskHttpServer(controller);
