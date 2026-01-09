@@ -4,15 +4,11 @@ import br.com.taylor.entity.Task;
 import br.com.taylor.enums.TaskStatus;
 import br.com.taylor.infra.ConnectionFactory;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.lang.String.valueOf;
 
 public class JdbcTaskRepository implements TaskRepository{
     @Override
@@ -44,6 +40,7 @@ public class JdbcTaskRepository implements TaskRepository{
                     var f2 = Task.class.getDeclaredField("updatedAt");
                     f2.setAccessible(true);
                     f2.set(task, updatedAt);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -57,12 +54,29 @@ public class JdbcTaskRepository implements TaskRepository{
     }
 
     @Override
-    public Task findById(Long id) {
-        return null;
+    public Task save(Task task) {
+        String sql = "INSERT INTO tasks (description, status, created_at, updated_at) VALUES (?,?,?,?)";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            stmt.setString(1, task.getDescription());
+            stmt.setString(2, task.getStatus().name());
+            stmt.setString(3, task.getCreatedAt().toString());
+            stmt.setString(4, task.getUpdatedAt().toString());
+
+            stmt.executeUpdate();
+            ResultSet rs = stmt.getGeneratedKeys();
+            if(rs.next()) task.setId(rs.getInt(1));
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return task;
     }
 
     @Override
-    public Task save(Task task) {
+    public Task findById(Long id) {
         return null;
     }
 

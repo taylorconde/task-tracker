@@ -134,16 +134,18 @@ public class TaskSerializer {
             Task task = new Task(id, description, status);
 
             // injeta as datas via reflection
-            try {
-                var f1 = Task.class.getDeclaredField("createdAt");
-                f1.setAccessible(true);
-                f1.set(task, createdAt);
+            if(createdAt != null){
+                try {
+                    var f1 = Task.class.getDeclaredField("createdAt");
+                    f1.setAccessible(true);
+                    f1.set(task, createdAt);
 
-                var f2 = Task.class.getDeclaredField("updatedAt");
-                f2.setAccessible(true);
-                f2.set(task, updatedAt);
-            } catch (Exception e) {
-                e.printStackTrace();
+                    var f2 = Task.class.getDeclaredField("updatedAt");
+                    f2.setAccessible(true);
+                    f2.set(task, updatedAt);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             tasks.add(task);
