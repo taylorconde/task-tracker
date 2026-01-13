@@ -76,13 +76,27 @@ public class JdbcTaskRepository implements TaskRepository{
     }
 
     @Override
-    public Task findById(Long id) {
-        return null;
+    public boolean update(Long id, Task updateTask) {
+        String sql = "UPDATE tasks SET description=?, status=?, updated_at=? WHERE id=?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)){
+
+            stmt.setString(1, updateTask.getDescription());
+            stmt.setString(2, updateTask.getStatus().name());
+            stmt.setString(3, updateTask.getUpdatedAt().toString());
+            stmt.setLong(4, id);
+
+            return stmt.executeUpdate() == 1;
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public boolean update(Long id, Task updateTask) {
-        return false;
+    public Task findById(Long id) {
+        return null;
     }
 
     @Override
