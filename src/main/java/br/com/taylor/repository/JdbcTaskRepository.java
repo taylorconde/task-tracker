@@ -111,6 +111,16 @@ public class JdbcTaskRepository implements TaskRepository{
 
     @Override
     public boolean delete(Long id) {
-        return false;
+        String sql = "DELETE FROM tasks WHERE id=?";
+
+        try (Connection conn = ConnectionFactory.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            return stmt.executeUpdate() == 1;
+
+        }catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
