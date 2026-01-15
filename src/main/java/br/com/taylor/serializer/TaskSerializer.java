@@ -2,6 +2,7 @@ package br.com.taylor.serializer;
 
 import br.com.taylor.entity.Task;
 import br.com.taylor.enums.TaskStatus;
+import br.com.taylor.repository.JdbcTaskRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -132,21 +133,6 @@ public class TaskSerializer {
 
             // cria task
             Task task = new Task(id, description, status);
-
-            // injeta as datas via reflection
-            if(createdAt != null){
-                try {
-                    var f1 = Task.class.getDeclaredField("createdAt");
-                    f1.setAccessible(true);
-                    f1.set(task, createdAt);
-
-                    var f2 = Task.class.getDeclaredField("updatedAt");
-                    f2.setAccessible(true);
-                    f2.set(task, updatedAt);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
 
             tasks.add(task);
         }

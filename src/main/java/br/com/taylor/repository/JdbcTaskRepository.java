@@ -29,21 +29,8 @@ public class JdbcTaskRepository implements TaskRepository{
                 LocalDateTime updatedAt = LocalDateTime.parse(rs.getString("updated_at"));
 
                 // cria task
-                Task task = new Task(id, description, status);
+                Task task = new Task(id, description, status,createdAt,updatedAt);
 
-                // injeta as datas via reflection
-                try {
-                    var f1 = Task.class.getDeclaredField("createdAt");
-                    f1.setAccessible(true);
-                    f1.set(task, createdAt);
-
-                    var f2 = Task.class.getDeclaredField("updatedAt");
-                    f2.setAccessible(true);
-                    f2.set(task, updatedAt);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
                 tasks.add(task);
             }
         } catch (SQLException e) {
@@ -96,7 +83,30 @@ public class JdbcTaskRepository implements TaskRepository{
 
     @Override
     public Task findById(Long id) {
-        return null;
+        String sql = "SELECT * FROM tasks WHERE id=?";
+        Task task = null;
+
+        try (Connection conn = ConnectionFactory.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setLong(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if(rs.next()) {
+                int idInt = rs.getInt("id");
+                String description = rs.getString("description");
+                TaskStatus status = TaskStatus.valueOf(rs.getString("status"));
+                LocalDateTime createdAt = LocalDateTime.parse(rs.getString("created_at"));
+                LocalDateTime updatedAt = LocalDateTime.parse(rs.getString("updated_at"));
+
+                // cria task
+                task = new Task(idInt, description, status, createdAt, updatedAt);
+            };
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return task;
     }
 
     @Override
