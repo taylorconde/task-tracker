@@ -16,6 +16,13 @@ public class TaskService {
     }
 
     public Task create(Task task) {
+
+        if(task.getDescription().isBlank()){
+            throw new IllegalArgumentException("Description cannot be empty");
+        }
+        if(task.getStatus() == null){
+            throw new IllegalArgumentException("Status cannot be empty");
+        }
         return repository.save(task);
     }
 
