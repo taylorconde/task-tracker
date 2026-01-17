@@ -154,17 +154,13 @@ public class TaskController implements HttpHandler {
             send(exchange, 400, "{\"error\":\"Invalid body\"}");
             return;
         }
-        if(tasks.getFirst().getStatus() == null) {
-            send(exchange, 400, "{\"error\":\"Status is required\"}");
-            return;
-        }
-        if(tasks.getFirst().getDescription().isBlank()) {
-            send(exchange, 400, "{\"error\":\"Description is required\"}");
-            return;
-        }
 
-        Task created = service.create(tasks.get(0));
-        send(exchange, 201, TaskSerializer.toJson(created));
+        try {
+            Task created = service.create(tasks.get(0));
+            send(exchange, 201, TaskSerializer.toJson(created));
+        } catch (Exception e) {
+            send(exchange, 400, "{\"error\":\"" + e.getMessage() + "\"}");
+        }
     }
 
     private void handleUpdate(HttpExchange exchange, Long id) throws IOException{
