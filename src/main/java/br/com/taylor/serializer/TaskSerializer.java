@@ -12,15 +12,6 @@ import static br.com.taylor.utils.JsonUtils.escape;
 
 public class TaskSerializer {
 
-//    public static String toJson(Task task) {
-//        return "{"
-//                + "\"id\":" + task.getId() + ","
-//                + "\"description\":\"" + escape(task.getDescription()) + "\","
-//                + "\"status\":\"" + task.getStatus().name() + "\","
-//                + "\"createdAt\":\"" + task.getCreatedAt() + "\","
-//                + "\"updatedAt\":\"" + task.getUpdatedAt() + "\""
-//                + "}";
-//    }
     public static String toJson(Task task) {
         StringBuilder sb = new StringBuilder();
         sb.append("{");
