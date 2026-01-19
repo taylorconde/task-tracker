@@ -55,8 +55,7 @@ public class TaskService {
     }
 
     public boolean delete(Long id) {
-        Task found = repository.findById(id);
-        if (found == null) throw new RuntimeException("Task not found: " + id);
+        Task found = this.findById(id);
         if (found.getStatus() == TaskStatus.DONE) throw new RuntimeException("Task is already done: " + id);
         return repository.delete(id);
     }

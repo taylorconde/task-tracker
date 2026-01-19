@@ -13,8 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -131,8 +130,51 @@ class TaskServiceTest {
         assertEquals("Description cannot be empty", actual.getMessage());
     }
 
+    // DELETE
+    @Test
+    void deveLancarErroAoTentarDeletarTarefaConclulida() {
+        //given
+        Long idExistente = 1L;
+        Task tarefaExistente = new Task(1, "descricao", TaskStatus.DONE);
+
+        given(repository.findById(idExistente)).willReturn(tarefaExistente);
+
+        //when
+        RuntimeException actual = assertThrows(RuntimeException.class, () ->
+                service.delete(idExistente));
+
+        //then
+
+        assertEquals("Task is already done: " + idExistente,actual.getMessage());
+        then(repository).should(never()).delete(anyLong());
+        then(repository).should().findById(idExistente);
+    }
+
+    @Test
+    void deveDeletarTarefaComSucesso(){
+        //given
+        Long idExistente = 1L;
+        Task tarefaExistente = new Task(1, "descricao", TaskStatus.IN_PROGRESS);
+
+        given(repository.findById(idExistente)).willReturn(tarefaExistente);
+        given(repository.delete(idExistente)).willReturn(true);
+        //when
+        var actual = service.delete(idExistente);
+
+         //then
+        assertTrue(actual);
+        then(repository).should().delete(idExistente);
+    }
+
+
+
+
+
+
+
 
 
 
 
 }
+
