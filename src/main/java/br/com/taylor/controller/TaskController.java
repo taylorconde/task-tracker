@@ -128,10 +128,10 @@ public class TaskController implements HttpHandler {
         try {
             String statusParam = query.split("=")[1].toUpperCase();
             TaskStatus status = TaskStatus.valueOf(statusParam);
+            List<Task> foundTasks = service.findByStatus(status);
 
-            List<Task> filteredTasks = service.findByStatus(status);
+            send(exchange, 200, TaskSerializer.toJson(foundTasks));
 
-            send(exchange, 200, TaskSerializer.toJson(filteredTasks));
         } catch (Exception e) {
             send(exchange, 400, "Status inválido. Opções: TODO, IN_PROGRESS, DONE");
         }
