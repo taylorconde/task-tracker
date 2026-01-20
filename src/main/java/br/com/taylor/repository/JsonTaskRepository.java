@@ -1,6 +1,7 @@
 package br.com.taylor.repository;
 
 import br.com.taylor.entity.Task;
+import br.com.taylor.enums.TaskStatus;
 import br.com.taylor.serializer.TaskSerializer;
 import br.com.taylor.utils.JsonUtils;
 
@@ -26,6 +27,12 @@ public class JsonTaskRepository implements TaskRepository{
                 .filter(t -> t.getId() == id)
                 .findFirst()
                 .orElse(null);
+    }
+
+    //todo
+    @Override
+    public List<Task> findByStatus(TaskStatus status) {
+        return List.of();
     }
 
     // Create new Task

@@ -2,6 +2,7 @@ package br.com.taylor.service;
 
 import br.com.taylor.entity.Task;
 import br.com.taylor.enums.TaskStatus;
+import br.com.taylor.repository.JdbcTaskRepository;
 import br.com.taylor.repository.TaskRepository;
 
 import java.util.ArrayList;
@@ -61,12 +62,6 @@ public class TaskService {
     }
 
     public List<Task> findByStatus(TaskStatus status) {
-        List<Task> allTasks = findAll();
-        List<Task> filteredTasks = new ArrayList<>();
-
-        for(Task task : allTasks){
-            if(task.getStatus() == status) filteredTasks.add(task);
-        }
-        return filteredTasks;
+        return repository.findByStatus(status);
     }
 }

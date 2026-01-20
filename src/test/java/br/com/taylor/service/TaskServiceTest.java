@@ -9,6 +9,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -166,15 +169,36 @@ class TaskServiceTest {
         then(repository).should().delete(idExistente);
     }
 
+    //FIND BY STATUS
+    @Test
+    void deveRetornarListaVaziaQuandoNaoEncontrarTarefas(){
+        //given
+        TaskStatus status = TaskStatus.DONE;
 
+        given(repository.findByStatus(status)).willReturn(new ArrayList<>());
+        //when
+        List<Task> actual = service.findByStatus(status);
 
+        //then
+        assertTrue(actual.isEmpty());
+    }
 
+    @Test
+    void deveRetornarListaQuandoEncontrarTarefas(){
+        //given
+        TaskStatus status = TaskStatus.DONE;
+        List<Task> tarefasConcluidas = new ArrayList<>();
+        for(int i = 0; i < 10; i++){
+            tarefasConcluidas.add(new Task(i, "description:  " + i, TaskStatus.DONE));
+        }
 
+        given(repository.findByStatus(status)).willReturn(tarefasConcluidas);
+        //when
+        List<Task> actual = service.findByStatus(status);
 
-
-
-
-
-
+        //then
+        assertEquals(tarefasConcluidas, actual);
+        then(repository).should(never()).delete(any());
+        then(repository).should(never()).save(any());
+    }
 }
-

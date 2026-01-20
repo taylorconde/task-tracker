@@ -5,7 +5,6 @@ import br.com.taylor.enums.TaskStatus;
 import br.com.taylor.infra.ConnectionFactory;
 
 import java.sql.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,6 +107,40 @@ public class JdbcTaskRepository implements TaskRepository{
 
         return task;
     }
+
+    @Override
+    public List<Task> findByStatus(TaskStatus taskStatus) {
+        String sql = "SELECT * FROM tasks WHERE status=?";
+        List<Task> tasks = new ArrayList<>();
+
+        try (Connection conn = ConnectionFactory.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, taskStatus.name());
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+
+                int id = rs.getInt("id");
+                String description = rs.getString("description");
+                TaskStatus status = TaskStatus.valueOf(rs.getString("status"));
+                LocalDateTime createdAt = LocalDateTime.parse(rs.getString("created_at"));
+                LocalDateTime updatedAt = LocalDateTime.parse(rs.getString("updated_at"));
+
+                tasks.add(new Task(id, description, status, createdAt, updatedAt));
+            };
+
+        }catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return tasks;
+    }
+
+
+
+
+
 
     @Override
     public boolean delete(Long id) {
