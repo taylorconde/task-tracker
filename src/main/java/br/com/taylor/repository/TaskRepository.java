@@ -8,7 +8,7 @@ import java.util.List;
 public interface TaskRepository {
     List<Task> findAll();
     Task findById(Long id);
-    List<Task> findByStatus(TaskStatus status);
+    List<Task> findByStatus(List<TaskStatus> status);
     Task save(Task task);
     boolean update(Long id, Task updateTask);
     boolean delete(Long id);

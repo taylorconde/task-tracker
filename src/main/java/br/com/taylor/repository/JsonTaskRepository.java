@@ -31,7 +31,7 @@ public class JsonTaskRepository implements TaskRepository{
 
     //todo
     @Override
-    public List<Task> findByStatus(TaskStatus status) {
+    public List<Task> findByStatus(List<TaskStatus> status) {
         return List.of();
     }
 

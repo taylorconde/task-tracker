@@ -7,6 +7,7 @@ import br.com.taylor.infra.ConnectionFactory;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class JdbcTaskRepository implements TaskRepository{
@@ -109,14 +110,19 @@ public class JdbcTaskRepository implements TaskRepository{
     }
 
     @Override
-    public List<Task> findByStatus(TaskStatus taskStatus) {
-        String sql = "SELECT * FROM tasks WHERE status=?";
+    public List<Task> findByStatus(List<TaskStatus> taskStatus) {
+
         List<Task> tasks = new ArrayList<>();
+        String placeholders = String.join("," , Collections.nCopies(taskStatus.size(),"?"));
+
+        String sql = "SELECT * FROM tasks WHERE status IN (" + placeholders + ")";
 
         try (Connection conn = ConnectionFactory.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, taskStatus.name());
+            for (int i = 0; i < taskStatus.size(); i++) {
+                stmt.setString(i + 1, String.valueOf(taskStatus.get(i)).toUpperCase());
+            }
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {

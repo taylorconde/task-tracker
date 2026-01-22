@@ -11,9 +11,11 @@ import com.sun.net.httpserver.HttpHandler;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TaskController implements HttpHandler {
 
@@ -126,9 +128,14 @@ public class TaskController implements HttpHandler {
 
     private void handleFindByStatus(HttpExchange exchange, String query) throws IOException {
         try {
-            String statusParam = query.split("=")[1].toUpperCase();
-            TaskStatus status = TaskStatus.valueOf(statusParam);
-            List<Task> foundTasks = service.findByStatus(status);
+
+            String param = query.split("=")[1];
+
+            List<TaskStatus> statusList = Arrays.stream(param.split(","))
+                    .map(TaskStatus::valueOf)
+                    .toList();
+
+            List<Task> foundTasks = service.findByStatus(statusList);
 
             send(exchange, 200, TaskSerializer.toJson(foundTasks));
 

@@ -14,6 +14,21 @@
     <input type="text" id="taskInput" placeholder="Nova tarefa...">
     <button id="addTaskBtn">Adicionar</button>
 
+    <div class="container">
+        <div class="statusButton">
+            <input type="checkbox" name="todo" id="todo">
+            <label for="todo">A Fazer</label>
+        </div>
+        <div class="statusButton">
+            <input type="checkbox" name="in_progress" id="in_progress">
+            <label for="in_progress">Em Andamento</label>
+        </div>
+        <div class="statusButton">
+            <input type="checkbox" name="done" id="done">
+            <label for="done">Concluída</label>
+        </div>
+    </div>
+
     <ul id="taskList"></ul>
 
     <script src="/js/script.js"></script>

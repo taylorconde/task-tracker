@@ -61,7 +61,7 @@ public class TaskService {
         return repository.delete(id);
     }
 
-    public List<Task> findByStatus(TaskStatus status) {
+    public List<Task> findByStatus(List<TaskStatus> status) {
         return repository.findByStatus(status);
     }
 }
