@@ -3,6 +3,7 @@ package br.com.taylor.service;
 import br.com.taylor.entity.Task;
 import br.com.taylor.enums.TaskStatus;
 import br.com.taylor.repository.TaskRepository;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -82,6 +83,7 @@ class TaskServiceTest {
 
     //UPDATE
     @Test
+    @DisplayName("ATUALIZAR TAREFA OK!")
     void deveAtualizarTarefaComSucesso(){
         //given
         Long idExistente = 1L;
@@ -173,7 +175,7 @@ class TaskServiceTest {
     @Test
     void deveRetornarListaVaziaQuandoNaoEncontrarTarefas(){
         //given
-        TaskStatus status = TaskStatus.DONE;
+        List<TaskStatus> status = List.of(TaskStatus.DONE);
 
         given(repository.findByStatus(status)).willReturn(new ArrayList<>());
         //when
@@ -186,7 +188,7 @@ class TaskServiceTest {
     @Test
     void deveRetornarListaQuandoEncontrarTarefas(){
         //given
-        TaskStatus status = TaskStatus.DONE;
+        List<TaskStatus> status = List.of(TaskStatus.DONE);
         List<Task> tarefasConcluidas = new ArrayList<>();
         for(int i = 0; i < 10; i++){
             tarefasConcluidas.add(new Task(i, "description:  " + i, TaskStatus.DONE));

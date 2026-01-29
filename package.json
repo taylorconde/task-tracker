@@ -1,0 +1,23 @@
+{
+  "name": "tasktracker",
+  "version": "1.0.0",
+  "description": "Uma API RESTful para gerenciamento de tarefas (CRUD), desenvolvida com Java puro para fins de estudo sobre o funcionamento interno do protocolo HTTP e arquitetura de software sem dependência de frameworks robustos.",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taylorconde/task-tracker.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/taylorconde/task-tracker/issues"
+  },
+  "homepage": "https://github.com/taylorconde/task-tracker#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.0",
+    "@types/node": "^25.0.10"
+  }
+}

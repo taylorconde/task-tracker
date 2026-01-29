@@ -3,6 +3,8 @@
 const taskList = document.getElementById('taskList');
 const taskInput = document.getElementById('taskInput');
 const addTaskBtn = document.getElementById('addTaskBtn');
+const checkboxes = document.querySelectorAll('.filter-checkbox');
+
 
 addTaskBtn.addEventListener('click', () => {
     const description = taskInput.value;
@@ -13,11 +15,17 @@ addTaskBtn.addEventListener('click', () => {
     }
 
     addTask(description);
-})
+});
 
 // 2. Função para carregar as tarefas
 function loadTasks() {
-    fetch('/tasks')
+
+    const statusString = getSelectedStatus();
+    let url = '/tasks';
+
+    url = statusString === "" ? url : `${url}?status=${statusString}`;
+
+    fetch(url)
         .then(response => response.json())
         .then(tasks => {
             // Limpa a lista antes de adicionar (para não duplicar)
@@ -114,5 +122,18 @@ function updateTask(id, changes) {
         });
 }
 
-// 4. Chama a função assim que a página carregar
+// 4. Função para filtrar por STATUS
+function getSelectedStatus() {
+    const checkboxes = document.querySelectorAll("input.filter-checkbox:checked");
+
+    return Array.from(checkboxes, item => item.value).join(",");
+}
+
+// 4.1 EventListener para os botões de status
+checkboxes.forEach(checkboxe => {
+    checkboxe.addEventListener('change', () => loadTasks())
+});
+
+
+// 5. Chama a função assim que a página carregar
 loadTasks();
