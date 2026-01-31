@@ -41,6 +41,7 @@ build/
 
 ### Data ###
 data/
+.env
 
 # Playwright
 node_modules/
