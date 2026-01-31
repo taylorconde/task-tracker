@@ -188,10 +188,11 @@ class TaskServiceTest {
     @Test
     void deveRetornarListaQuandoEncontrarTarefas(){
         //given
-        List<TaskStatus> status = List.of(TaskStatus.DONE);
+        List<TaskStatus> status = List.of(TaskStatus.DONE, TaskStatus.TODO);
         List<Task> tarefasConcluidas = new ArrayList<>();
         for(int i = 0; i < 10; i++){
             tarefasConcluidas.add(new Task(i, "description:  " + i, TaskStatus.DONE));
+            tarefasConcluidas.add(new Task(i, "description:  " + i, TaskStatus.TODO));
         }
 
         given(repository.findByStatus(status)).willReturn(tarefasConcluidas);
