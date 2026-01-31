@@ -1,0 +1,16 @@
+services:
+  db:
+    image: postgres:15 # Versão estável e moderna 🐘
+    container_name: tasktracker-postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=${DB_USER}      # Lê do arquivo .env
+      - POSTGRES_PASSWORD=${DB_PASSWORD} # Lê do arquivo .env
+      - POSTGRES_DB=tasktracker_db
+    ports:
+      - "5432:5432" # Mapeia a porta padrão do Postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Garante que seus dados não sumam se o container parar
+
+volumes:
+  postgres_data:
