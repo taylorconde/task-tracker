@@ -1,139 +1,141 @@
+const API_URL = "/tasks";
 
-// 1. Captura a lista do HTML
-const taskList = document.getElementById('taskList');
-const taskInput = document.getElementById('taskInput');
-const addTaskBtn = document.getElementById('addTaskBtn');
-const checkboxes = document.querySelectorAll('.filter-checkbox');
+document.addEventListener("DOMContentLoaded", () => {
+    carregarTarefas();
+    inicializarDragAndDrop();
+});
 
+async function adicionarTarefa(text, statusDestino) {
+    try {
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                description: text,
+                status: statusDestino
+            })
+        });
 
-addTaskBtn.addEventListener('click', () => {
-    const description = taskInput.value;
+        const novaTarefa = await response.json();
+        criarCardHTML(novaTarefa);
 
-    if (description.trim() === "") {
-        alert("Por favor, informe a tarefa.");
-        return
+    } catch (erro) {
+        console.error("Não foi possível criar Task: ", erro);
+    }
+}
+
+function ativarModoEdicao(botaoAdicionar) {
+
+    botaoAdicionar.classList.add('d-none');
+    botaoAdicionar.nextElementSibling.classList.remove('d-none');
+    botaoAdicionar.nextElementSibling.focus();
+}
+
+function salvarAoClicarFora(textarea, idColuna) {
+
+    if (textarea.value.trim().length !== 0) {
+        adicionarTarefa(textarea.value, idColuna);
     }
 
-    addTask(description);
-});
-
-// 2. Função para carregar as tarefas
-function loadTasks() {
-
-    const statusString = getSelectedStatus();
-    let url = '/tasks';
-
-    url = statusString === "" ? url : `${url}?status=${statusString}`;
-
-    fetch(url)
-        .then(response => response.json())
-        .then(tasks => {
-            // Limpa a lista antes de adicionar (para não duplicar)
-            taskList.innerHTML = '';
-
-            // 3. Itera sobre cada tarefa vinda do Java
-            tasks.forEach(task => {
-                const li = document.createElement('li');
-
-                // DESCRIPTION
-                const descInput = document.createElement('input');
-                descInput.type = 'text';
-                descInput.value = task.description;
-
-                descInput.addEventListener('change', () => {
-
-                    if (descInput.value.trim() !== "") {
-                        updateTask(task.id, { description: descInput.value })
-                    } else {
-                        alert('A descrição da tarefa não pode ser em branco!');
-                        descInput.value = task.description;
-                    };
-                });
-
-                const statusSelect = document.createElement('select');
-                statusSelect.innerHTML = `
-                    <option value="TODO">A Fazer</option>
-                    <option value="IN_PROGRESS">Em Andamento</option>
-                    <option value="DONE">Concluída</option>`;
-                statusSelect.value = task.status;
-
-                statusSelect.addEventListener("change", () => {
-                    updateTask(task.id, { status: statusSelect.value });
-                });
-
-
-                const deleteBtn = document.createElement('button');
-                deleteBtn.innerText = "Excluir";
-                deleteBtn.addEventListener("click", () => deleteTask(task.id, li));
-
-
-                li.appendChild(descInput);
-                li.appendChild(statusSelect);
-                li.appendChild(deleteBtn);
-                taskList.appendChild(li);
-            });
-        });
+    textarea.classList.add('d-none');
+    textarea.previousElementSibling.classList.remove('d-none');
+    textarea.value = '';
 }
 
-// 3. Função para deletar task
-function deleteTask(id, element) {
-    fetch('/tasks/' + id, { method: 'DELETE' })
-        .then(response => {
-            if (response.ok) {
-                element.remove();
+function inicializarDragAndDrop() {
+    const colunas = ['TODO', 'IN_PROGRESS', 'DONE'];
+
+    colunas.forEach(colunaId => {
+        const container = document.getElementById(colunaId);
+
+        new Sortable(container, {
+            group: 'kanban',
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            onEnd: function (evt) {
+                const itemArrastado = evt.item;
+                const colunaDestino = evt.to.id;
+                const idTarefa = itemArrastado.dataset.id;
+
+                console.log(`Tafera ${idTarefa} movida para ${colunaDestino}.`);
+
+                if (evt.from.id !== evt.to.id) {
+                    atualizarTarefa(idTarefa, { status: evt.to.id });
+                }
             }
         });
+    });
 }
 
-// 3.1 Função para adicionar task
-function addTask(description) {
-    const newTask = {
-        description: description,
-        status: 'TODO'
-    };
+async function carregarTarefas() {
+    try {
+        const response = await fetch(API_URL);
+        const tarefas = await response.json();
 
-    fetch('/tasks', {
+        //Limpa as colunas
+        ['TODO', 'IN_PROGRESS', 'DONE'].forEach(id => document.getElementById(id).innerHTML = "");
 
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', },
-        body: JSON.stringify(newTask)
+        tarefas.forEach(tarefa => {
 
-    })
-        .then(response => {
-            if (response.ok) {
-                loadTasks();
-                taskInput.value = '';
-            }
+            criarCardHTML(tarefa);
         });
+    } catch (erro) {
+        console.error("Erro ao carregar: ", erro);
+    }
 }
 
-// 3.2 Função para alterar task (PATCH)
-function updateTask(id, changes) {
+async function atualizarTarefa(id, dadosParaAtualizar) {
 
-    fetch('/tasks/' + id, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(changes)
-    })
-        .then(response => {
-            if (!response.ok) {
-                alert("Erro ao atualizar tarefa");
-            }
+    try {
+
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dadosParaAtualizar)
         });
+
+        console.log("Status atualizado com sucesso!");
+
+    } catch (erro) {
+        console.error("Erro na requisição: ", erro);
+        alert("Não foi possível salvar a alteração.");
+    }
 }
 
-// 4. Função para filtrar por STATUS
-function getSelectedStatus() {
-    const checkboxes = document.querySelectorAll("input.filter-checkbox:checked");
+async function deletarTarefa(id) {
 
-    return Array.from(checkboxes, item => item.value).join(",");
+    try {
+
+        const response = await fetch(`${API_URL}/${id}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        const card = document.querySelector(`[data-id="${id}"]`);
+        if (card) card.remove();
+
+        console.log("Task deletada com sucesso!")
+    } catch (erro) {
+        console.error("Erro na requisição: ", erro);
+    }
+
 }
 
-// 4.1 EventListener para os botões de status
-checkboxes.forEach(checkboxe => {
-    checkboxe.addEventListener('change', () => loadTasks())
-});
+function criarCardHTML(tarefa) {
+    const coluna = document.getElementById(tarefa.status);
+    if (!coluna) return; // Se o status não existir no HTML, ignora
 
+    const card = document.createElement('div');
+    card.className = 'task-card';
+    card.setAttribute('data-id', tarefa.id);
+    card.innerHTML = `
+        <strong>#${tarefa.id}</strong> - ${tarefa.description}
+        <br>
+        <small class="text-muted" style="font-size: 11px;">
+            <i class="far fa-clock"></i> ${new Date(tarefa.createdAt).toLocaleDateString()}
+        </small>
+        <i class="fas fa-trash-alt delete-btn" onclick="deletarTarefa(${tarefa.id})"></i>
+    `;
 
-// 5. Chama a função assim que a página carregar
-loadTasks();
+    coluna.appendChild(card);
+}

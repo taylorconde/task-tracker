@@ -3,33 +3,72 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TaskTracer Pro</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="/public/css/style.css">
+
 </head>
 
 <body>
 
-    <h1>Task Tracker</h1>
-
-    <input type="text" id="taskInput" placeholder="Nova tarefa...">
-    <button id="addTaskBtn">Adicionar</button>
-
-    <div class="container">
-        <div class="statusButton">
-            <input type="checkbox" name="todo" id="TODO" value="TODO" class="filter-checkbox">
-            <label for="TODO">A Fazer</label>
+    <div class="container-fluid px-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1 class="h3 text-dark"><i class="fas fa-tasks me-2"></i>TaskTracker <span
+                    class="badge bg-primary fs-6 top-0">Pro</span></h1>
+            <button class="btn btn-dark shadow-sm" onclick="abrirModalNovaTarefa()">
+                <i class="fas fa-plus me-2"></i>Nova Tarefa
+            </button>
         </div>
-        <div class="statusButton">
-            <input type="checkbox" name="in_progress" id="IN_PROGRESS" value="IN_PROGRESS" class="filter-checkbox">
-            <label for="IN_PROGRESS">Em Andamento</label>
-        </div>
-        <div class="statusButton">
-            <input type="checkbox" name="done" id="DONE" value="DONE" class="filter-checkbox">
-            <label for="DONE">Concluída</label>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="kanban-column shadow-sm">
+                    <div class="column-header header-todo mb-3 text-center">
+                        <i class="fas fa-clipboard-list me-2"></i>A Fazer
+                    </div>
+                    <div id="TODO" class="list-group min-vh-50">
+                    </div>
+                    <div class="p-2">
+                        <div class="btn-add-task text-muted p-2" onclick="ativarModoEdicao(this)">
+                            <i class="fas fa-plus me-1"></i> Adicionar uma Task
+                        </div>
+
+                        <textarea class="form-control d-none" rows="3" placeholder="Digite o título da tarefa..."
+                            onblur="salvarAoClicarFora(this, 'TODO')"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="kanban-column shadow-sm">
+                    <div class="column-header header-doing mb-3 text-center">
+                        <i class="fas fa-spinner fa-spin me-2"></i>Em Progresso
+                    </div>
+                    <div id="IN_PROGRESS" class="list-group min-vh-50">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="kanban-column shadow-sm">
+                    <div class="column-header header-done mb-3 text-center">
+                        <i class="fas fa-check-circle me-2"></i>Concluído
+                    </div>
+                    <div id="DONE" class="list-group min-vh-50">
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <ul id="taskList"></ul>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.15.0/Sortable.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
     <script src="/js/script.js"></script>
 
