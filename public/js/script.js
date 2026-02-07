@@ -24,11 +24,11 @@ async function adicionarTarefa(text, statusDestino) {
     }
 }
 
-function ativarModoEdicao(botaoAdicionar) {
+function ativarModoEdicao(elementoClicado) {
 
-    botaoAdicionar.classList.add('d-none');
-    botaoAdicionar.nextElementSibling.classList.remove('d-none');
-    botaoAdicionar.nextElementSibling.focus();
+    elementoClicado.classList.add('d-none');
+    elementoClicado.nextElementSibling.classList.remove('d-none');
+    elementoClicado.nextElementSibling.focus();
 }
 
 function salvarAoClicarFora(textarea, idColuna) {
@@ -121,21 +121,61 @@ async function deletarTarefa(id) {
 
 }
 
+function salvarEdicao(elemento, id) {
+    const novoTexto = elemento.innerText.trim(); // contenteditable usa innerText
+
+    // Evita salvar se estiver vazio ou não mudou nada (opcional)
+    if (!novoTexto) return;
+
+    const dados = { description: novoTexto };
+    atualizarTarefa(id, dados);
+
+    // Não precisa mais esconder/mostrar nada!
+}
+
+// Bônus: Salvar ao apertar Enter (sem Shift)
+function verificarEnter(event, elemento) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault(); // Evita pular linha
+        elemento.blur(); // Tira o foco, o que dispara o salvarEdicao
+    }
+}
+
 function criarCardHTML(tarefa) {
+
     const coluna = document.getElementById(tarefa.status);
-    if (!coluna) return; // Se o status não existir no HTML, ignora
+    if (!coluna) return;
 
     const card = document.createElement('div');
     card.className = 'task-card';
     card.setAttribute('data-id', tarefa.id);
+
     card.innerHTML = `
-        <strong>#${tarefa.id}</strong> - ${tarefa.description}
+        <strong>#${tarefa.id}</strong> 
+        <i class="fas fa-trash-alt delete-btn" onclick="deletarTarefa(${tarefa.id})"></i>
+        <div class="task-description" 
+             contenteditable="true" 
+             onblur="salvarEdicao(this, ${tarefa.id})"
+             onkeydown="verificarEnter(event, this)">
+            ${tarefa.description}
+        </div>
+
         <br>
         <small class="text-muted" style="font-size: 11px;">
             <i class="far fa-clock"></i> ${new Date(tarefa.createdAt).toLocaleDateString()}
         </small>
-        <i class="fas fa-trash-alt delete-btn" onclick="deletarTarefa(${tarefa.id})"></i>
-    `;
-
+        `;
     coluna.appendChild(card);
+}
+
+function alterarTema(button) {
+
+    document.body.classList.toggle('dark-mode');
+
+    button.innerHTML = document.body.classList.contains('dark-mode')
+        ? '<i class="fas fa-sun me-2"></i> Light Mode'
+        : '<i class="fas fa-moon me-2"></i>  Dark Mode';
+    button.className = document.body.classList.contains('dark-mode')
+        ? "btn btn-light shadow-sm"
+        : "btn btn-dark shadow-sm";
 }

@@ -56,7 +56,7 @@ public class TaskController implements HttpHandler {
         String key = method + ":" + path;
 
         // Caso 1: rota para JavaScript
-        if (method.equals("GET") && path.startsWith("/js/") || path.startsWith("/css/")) {
+        if (method.equals("GET") && (path.startsWith("/js/") || path.startsWith("/css/"))) {
             handleStaticFile(exchange, path);
             return;
         }
