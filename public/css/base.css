@@ -1,0 +1,20 @@
+body {
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding-top: 20px;
+    transition: background-color 0.3s, color 0.3s;
+    /* Para uma transição suave entre temas */
+}
+
+.h1,
+.h2,
+.h3 {
+    color: var(--text-main) !important;
+    /* Força o branco sobrepondo o Bootstrap */
+}
+
+/* Texto do botão Adicionar uma Task*/
+.btn-add-task {
+    color: var(--text-main) !important;
+}

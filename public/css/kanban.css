@@ -1,0 +1,169 @@
+
+
+
+
+/* O container da coluna (pai) */
+.kanban-column {
+    background-color: var(--bg-column);
+    border-radius: 8px;
+    min-height: 500px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    /* Garante que a coluna tenha altura total */
+    box-shadow: 0 4px 6px rgba(var(--shadow-rgb), var(--shadow-opacity));
+}
+
+.task-card {
+    background-color: var(--bg-card);
+    border: none;
+    border-radius: 6px;
+    padding: 15px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(var(--shadow-rgb), var(--shadow-opacity));
+    cursor: grab;
+    transition: all 0.2s;
+    position: relative;
+}
+
+/* Quando passar o mouse, mostra que é editável */
+.task-description:hover {
+    background-color: var(--bg-editable-hover);
+    color: var(--text-editable-hover);
+}
+
+/* Estilo para a área de edição da tarefa */
+.task-edit-area {
+    width: 100%;
+    background-color: var(--bg-edit-area);
+    color: var(--text-editable-hover);
+
+    border: 1px solid var(--ghost-border-color);
+    border-radius: 4px;
+    padding: 8px;
+    min-height: 80px;
+    /* Altura inicial maior para ser confortável */
+    resize: vertical;
+    /* Permite ao usuário puxar para aumentar se quiser */
+    outline: none;
+    /* Remove a borda azul padrão do navegador ao clicar */
+    font-family: inherit;
+    /* Mantém a mesma fonte do resto do site */
+    margin-top: 5px;
+    margin-bottom: 5px;
+    display: block;
+    /* Garante que quebre a linha */
+}
+
+.column-header {
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    padding: 15px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    color: var(--bg-card);
+}
+
+/* Cores das colunas */
+.header-todo {
+    background-color: var(--header-todo);
+}
+
+.header-doing {
+    background-color: var(--header-doing);
+}
+
+.header-done {
+    background-color: var(--header-done);
+}
+
+/* A lista de tarefas (a zona onde soltamos os cards) */
+.list-group {
+    flex-grow: 1;
+    /* Faz a div crescer para ocupar o espaço disponível 🚀 */
+    min-height: 100px;
+    /* Garante um espaço mínimo mesmo se estiver vazia */
+    background-color: rgba(var(--list-group-rgb), var(--list-opacity));
+    /* Opcional: ajuda a visualizar a área */
+}
+
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(var(--shadow-rgb), var(--shadow-opacity));
+}
+
+.task-card:active {
+    cursor: grabbing;
+}
+
+/* Fantasma (o card sendo arrastado) */
+.sortable-ghost {
+    opacity: 0.4;
+    background-color: var(--ghost-bg);
+    border: 2px dashed var(--ghost-border-color);
+}
+
+.delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: var(--danger-color);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.task-card:hover .delete-btn {
+    opacity: 1;
+}
+
+
+/* Opcional: Efeito de foco para saber que está ativo */
+.task-edit-area:focus {
+    border-color: var(--ghost-border-color);
+    background-color: var(--bg-editable-hover);
+}
+
+.task-description {
+    padding: 5px;
+    border-radius: 4px;
+    cursor: text;
+    outline: none;
+    /* Remove a borda azul padrão ao clicar */
+    transition: background 0.2s;
+}
+
+/* Quando clicar para editar */
+.task-description:focus {
+    background-color: var(--bg-edit-area);
+    box-shadow: 0 0 0 2px rgba(var(--shadow-rgb), var(--shadow-opacity));
+    color: var(--text-main);
+    /* Uma borda sutil */
+
+}
+
+/* Campo de texto para nova task*/
+.form-control,
+.form-control:focus {
+    background-color: var(--bg-card);
+    color: var(--text-main);
+    border-color: var(--bg-column);
+    box-shadow: none;
+}
+
+.form-control::placeholder {
+    color: var(--text-muted);
+    opacity: 0.7;
+}
+
+
+
+
+/* Correção opcional para o texto pequeno (datas) dentro dos cards */
+.task-card .text-muted {
+    color: var(--text-muted) !important;
+    /* Torna o texto cinza um pouco mais legível */
+}

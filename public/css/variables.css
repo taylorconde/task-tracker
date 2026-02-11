@@ -1,0 +1,65 @@
+:root {
+    /* Superfícies e Fundos */
+    --bg-page: #f0f2f5;
+    /* Fundo suave da página */
+    --bg-column: #d8dde4;
+    /* Fundo das colunas do Kanban */
+    --bg-card: #ffffff;
+    /* Fundo dos cartões de tarefa */
+    --bg-edit-area: #fdfdfd;
+    /* Fundo da área de texto ao editar descrição da task */
+
+    /* Texto */
+    --text-main: #333333;
+    /* Texto principal */
+    --text-muted: #6c757d;
+    /* Texto secundário/datas */
+
+    /* Interação área de edição da task "on hover" */
+    --bg-editable-hover: #e0e0e0;
+    --text-editable-hover: #2c2c2c;
+
+    /* Sobras */
+    --shadow-rgb: 0, 0, 0;
+    --shadow-opacity: 0.1;
+
+    /*Headers*/
+    /* Cabeçalho das colunas */
+    --header-todo: #6c757d;
+    --header-doing: #0d6efd;
+    --header-done: #198754;
+
+    /*Corpo das colunas*/
+    --list-group-rgb: 0, 0, 0;
+    --list-opacity: 0.02;
+
+    /* Fantasma (o card sendo arrastado) */
+    --ghost-bg: #c8c8c8;
+    --ghost-border-color: #666;
+
+    /*Lixeira - delete button*/
+    --danger-color: #dc3545;
+}
+
+body.dark-mode {
+    --bg-page: #121212;
+    --bg-column: #4d4d4d;
+    --bg-card: #2c2c2c;
+    --text-main: #e0e0e0;
+    --text-muted: #989fa5;
+    --bg-edit-area: #404040;
+    /* Valor para o fundo da edição no dark */
+    --bg-editable-hover: #454545;
+    --text-editable-hover: #f0f2f5;
+    /*Sombras*/
+    --shadow-rgb: 0, 0, 0;
+    --shadow-opacity: 0.5;
+    /*Corpo das colunas*/
+    --list-group-rgb: 0, 0, 0;
+    --list-opacity: 0.04;
+    /* Fantasma (o card sendo arrastado) */
+    --ghost-bg: #444;
+    --ghost-border-color: #888;
+    /*Lixeira - delete button*/
+    --danger-color: #ff4d5a;
+}
