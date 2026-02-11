@@ -18,6 +18,6 @@
   "homepage": "https://github.com/taylorconde/task-tracker#readme",
   "devDependencies": {
     "@playwright/test": "^1.58.0",
-    "@types/node": "^25.0.10"
+    "@types/node": "^25.2.3"
   }
 }
