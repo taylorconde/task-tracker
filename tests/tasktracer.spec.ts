@@ -1,7 +1,13 @@
 import { test, expect, Page } from '@playwright/test';
 
+test.describe.configure({ mode: 'serial' });
 test.beforeEach(async ({ page }: { page: Page }) => {
+
   await page.goto('http://localhost:8080');
+
+  await page.evaluate(() => {
+    window.localStorage.clear();
+  })
 });
 
 test('Deve adicionar uma nova tarefa no Kanban', async ({ page }: { page: Page }) => {
@@ -41,9 +47,19 @@ test('Deve mover uma tarefa de "A fazer" para "Em Progresso"', async ({ page }: 
   const boxDestino = await destino.boundingBox();
 
   if (boxOrigem && boxDestino) {
-    await page.mouse.move(boxOrigem.x + boxOrigem.width / 2, boxOrigem.y + 10);
+    // 1. Move para o topo
+    await page.mouse.move(boxOrigem.x + boxOrigem.width / 2, boxOrigem.y + 15);
     await page.mouse.down();
-    await page.mouse.move(boxDestino.x + boxDestino.width / 2, boxDestino.y + boxDestino.height / 2, { steps: 20 });
+
+    // 2. O "EMPURRÃO": Move só 5 pixels para baixo para o navegador entender que começou um arraste
+    await page.mouse.move(boxOrigem.x + boxOrigem.width / 2, boxOrigem.y + 20, { steps: 5 });
+    await page.waitForTimeout(200);
+
+    // 3. A VIAGEM: Move para o destino
+    await page.mouse.move(boxDestino.x + boxDestino.width / 2, boxDestino.y + boxDestino.height / 2, { steps: 40 });
+
+    // 4. Pausa antes de soltar (crucial para o drop ser aceito)
+    await page.waitForTimeout(200);
     await page.mouse.up();
   }
 
@@ -55,7 +71,7 @@ test('Deve mover uma tarefa de "A fazer" para "Em Progresso"', async ({ page }: 
 
 test('Deve deletar uma tarefa', async ({ page }) => {
   // 1. Setup: Criar uma tarefa para ser deletada
-  const nomeTarefa = `Task Movel ${Date.now()}`;
+  const nomeTarefa = `Task Delete ${Date.now()}`;
   await page.click('.kanban-column:has(#TODO) >> .btn-add-task');
   await page.fill('.kanban-column:has(#TODO) >> .form-control', nomeTarefa);
   await page.dispatchEvent('.kanban-column:has(#TODO) >> .form-control', 'blur');
@@ -63,10 +79,12 @@ test('Deve deletar uma tarefa', async ({ page }) => {
   // 2. Interação
   const card = page.locator('#TODO .task-card').filter({ hasText: nomeTarefa });
   const botaoDeletar = card.locator('.delete-btn');
+  const eventoConsole = page.waitForEvent('console', msg => msg.text().includes('Task deletada com sucesso!'));
 
   await card.hover();
-  await botaoDeletar.click();
-
+  await expect(botaoDeletar).toBeVisible();
+  // Em vez de .click({ force: true }), usamos isso:
+  await botaoDeletar.dispatchEvent('click');
   // 3. Validação: O cartão não deve mais existir
   await expect(card).not.toBeVisible();
 });
