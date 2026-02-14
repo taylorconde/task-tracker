@@ -8,17 +8,71 @@ jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
+
+    #1. SERVIÇO DE BANCO DE DADOS
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          POSTGRES_DB: tasktracker_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U ${{ secrets.DB_USER }} -d tasktracker_db" 
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
     steps:
     - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
+
+    #1. CONFIGURAR JAVA PARA O BACK-END
+    - name: Set up JDK 22
+      uses: actions/setup-java@v4
+      with:
+        java-version: '22'
+        distribution: 'temurin'
+        cache: maven
+
+    #2. CONFIGURAR NODE.JS PARA (Playwright)
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
       with:
         node-version: lts/*
-    - name: Install dependencies
+        cache: 'npm'
+
+    #3. INSTALAR DEPENDÊNCIAS DO BACK-END
+    - name: Install Java dependencies
+      run: mvn -B package -DskipTests --file pom.xml
+
+    #4. INSTALAR DEPENDÊNCIAS DO FRONTEND (Playwright)
+    - name: Install Node dependencies
       run: npm ci
+
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+
+    #5. CRIAR ARQUIVO .ENV
+    - name: Create .env file
+      run: |
+        echo "DB_TYPE=PostgresSQL" >> .env
+        echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+        echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+        echo "DB_URL=jdbc:postgresql://localhost:5432/tasktracker_db" >> .env
+
+    #6. INICIAR A APLICAÇÃO JAVA EM BACKGROUND
+    - name: Start Java Server
+      run: |
+        mvn exec:java -Dexec.mainClass="br.com.taylor.application.Main" &
+
+    - name: Wait for Server to be Ready
+      run: |
+        npx wait-on http://localhost:8080 --timeout 60000
+
     - name: Run Playwright tests
       run: npx playwright test
+    
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
