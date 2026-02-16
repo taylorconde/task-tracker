@@ -305,6 +305,13 @@ Os testes cobrem:
 - 💾 Persistência em SQLite/PostgreSQL/JSON
 - 📝 Serialização JSON manual
 
+## 🔮 Melhorias Futuras
+
+- [ ] Sincronização de dados entre PostgreSQL e SQLite
+- [ ] Endpoint `GET /api/status` para mostrar banco ativo
+- [ ] Interface visual para indicar qual banco está em uso
+- [ ] Sistema de backup automático
+
 ## 📊 Estrutura de Dados
 
 ### Objeto Task (JSON)
