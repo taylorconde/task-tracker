@@ -9,14 +9,65 @@ import java.sql.SQLException;
 public class ConnectionFactory {
 
     static Dotenv dotenv = Dotenv.load();
+    private static String activeDatabase = "";
+
+    public static String getActiveDatabase() {
+        return activeDatabase;
+    }
+
+    public static DatabaseConfig getDatabaseConfig(String dbType) {
+        DatabaseConfig config;
+
+        if (dbType.equals("auto")) {
+            config = getAutoDatabase();
+        } else {
+            config = switch (dbType) {
+                case "SQLite" -> {
+                    activeDatabase = "SQLite";
+                    yield new SQLiteDatabaseSetup();
+                }
+                case "PostgreSQL" -> {
+                    activeDatabase = "PostgreSQL";
+                    yield new PostgresDatabaseConfig();
+                }
+                default -> throw new IllegalStateException("Unexpected value: " + dbType);
+            };
+            config.createTables();
+        }
+        return config;
+    }
+
+    public static DatabaseConfig getAutoDatabase() {
+        System.out.println("DB_TYPE set to 'auto'. Attempting to connect to PostgreSQL first...");
+        DatabaseConfig postgresDb = new PostgresDatabaseConfig();
+        boolean postgresReady = postgresDb.createTables();
+
+        System.out.println("[AUTO] PostgreSQL ready? " + postgresReady);
+
+        if (postgresReady) {
+            activeDatabase = "PostgreSQL";
+            System.out.println("PostgreSQL is ready. Using PostgreSQL as the active database.");
+            return postgresDb;
+        }
+
+        System.out.println("[AUTO] PostgreSQL not available. Falling back to SQLite...");
+        DatabaseConfig sqliteDb = new SQLiteDatabaseSetup();
+        boolean sqliteReady = sqliteDb.createTables();
+        System.out.println("[AUTO] SQLite ready? " + sqliteReady);
+        activeDatabase = "SQLite";
+        System.out.println("PostgreSQL is " + (postgresReady ? "ready" : "not available") + ". Using " + activeDatabase + " instead.");
+        return sqliteDb;
+    }
 
     public static Connection getConnection() throws SQLException {
         final String DB_TYPE = dotenv.get("DB_TYPE");
 
-        return switch (DB_TYPE) {
+        String dbToUse = DB_TYPE.equals("auto") ? getActiveDatabase() : DB_TYPE;
+
+        return switch (dbToUse) {
                 case "SQLite" -> getSQLiteConnection();
-                case "PostgresSQL" -> getPostgresConnection();
-                default -> throw new IllegalStateException("Unexpected value: " + DB_TYPE);
+                case "PostgreSQL" -> getPostgresConnection();
+                default -> throw new IllegalStateException("Unexpected value: " + dbToUse);
         };
     }
 

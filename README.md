@@ -195,6 +195,12 @@ As tarefas podem ter os seguintes status:
 
 O projeto implementa **múltiplas estratégias de persistência** através do padrão Repository:
 
+### Configure via `.env`:
+
+- `DB_TYPE=auto` - **Recomendado**: Tenta PostgreSQL, faz fallback para SQLite automaticamente
+- `DB_TYPE=PostgreSQL` - Força uso do PostgreSQL (falha se indisponível)  
+- `DB_TYPE=SQLite` - Força uso do SQLite
+
 ### 1. SQLite (Recomendado para desenvolvimento)
 - Banco de dados local em arquivo (`data/task.db`)
 - Não requer instalação de servidor
