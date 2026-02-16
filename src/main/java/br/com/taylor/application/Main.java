@@ -1,6 +1,7 @@
  package br.com.taylor.application;
 
  import br.com.taylor.controller.TaskController;
+ import br.com.taylor.infra.ConnectionFactory;
  import br.com.taylor.infra.DatabaseConfig;
  import br.com.taylor.infra.PostgresDatabaseConfig;
  import br.com.taylor.infra.SQLiteDatabaseSetup;
@@ -15,19 +16,12 @@
     public static void main(String[] args) {
 
         Dotenv dotenv = Dotenv.load();
+        String DB_TYPE = dotenv.get("DB_TYPE");
 
         String path = "data/"+"task.json";
         int port = 8080;
 
-        String DB_TYPE = dotenv.get("DB_TYPE");
-
-        DatabaseConfig db = switch (DB_TYPE) {
-            case "SQLite" -> new SQLiteDatabaseSetup();
-            case "PostgresSQL" -> new PostgresDatabaseConfig();
-            default -> throw new IllegalArgumentException("Invalid DB_TYPE");
-        };
-
-        db.createTables();
+        DatabaseConfig db = ConnectionFactory.getDatabaseConfig(DB_TYPE);
 
         JdbcTaskRepository JdbcRepository = new JdbcTaskRepository();
         TaskService service = new TaskService(JdbcRepository);

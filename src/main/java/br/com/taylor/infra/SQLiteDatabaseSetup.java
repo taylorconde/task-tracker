@@ -6,7 +6,7 @@ import java.sql.Statement;
 
 public class SQLiteDatabaseSetup implements DatabaseConfig {
 
-    public void createTables() {
+    public boolean createTables() {
         String sql = """
                 CREATE TABLE IF NOT EXISTS tasks (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -22,9 +22,10 @@ public class SQLiteDatabaseSetup implements DatabaseConfig {
 
             stmt.execute(sql);
             System.out.println("Tabela 'tasks' verificada/criada com sucesso!");
-
+            return true;
         } catch (SQLException e) {
             System.err.println("Erro ao configurar banco: " + e.getMessage());
+            return false;
         }
     }
 }

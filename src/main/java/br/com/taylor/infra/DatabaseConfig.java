@@ -1,5 +1,5 @@
 package br.com.taylor.infra;
 
 public interface DatabaseConfig {
-    void createTables();
+    boolean createTables();
 }

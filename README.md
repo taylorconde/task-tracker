@@ -195,6 +195,12 @@ As tarefas podem ter os seguintes status:
 
 O projeto implementa **múltiplas estratégias de persistência** através do padrão Repository:
 
+### Configure via `.env`:
+
+- `DB_TYPE=auto` - **Recomendado**: Tenta PostgreSQL, faz fallback para SQLite automaticamente
+- `DB_TYPE=PostgreSQL` - Força uso do PostgreSQL (falha se indisponível)  
+- `DB_TYPE=SQLite` - Força uso do SQLite
+
 ### 1. SQLite (Recomendado para desenvolvimento)
 - Banco de dados local em arquivo (`data/task.db`)
 - Não requer instalação de servidor
@@ -298,6 +304,13 @@ Os testes cobrem:
 - 🌐 API RESTful funcional
 - 💾 Persistência em SQLite/PostgreSQL/JSON
 - 📝 Serialização JSON manual
+
+## 🔮 Melhorias Futuras
+
+- [ ] Sincronização de dados entre PostgreSQL e SQLite
+- [ ] Endpoint `GET /api/status` para mostrar banco ativo
+- [ ] Interface visual para indicar qual banco está em uso
+- [ ] Sistema de backup automático
 
 ## 📊 Estrutura de Dados
 
