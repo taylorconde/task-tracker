@@ -3,6 +3,7 @@ package br.com.taylor.repository;
 import br.com.taylor.entity.Task;
 import br.com.taylor.enums.TaskStatus;
 import br.com.taylor.infra.ConnectionFactory;
+import br.com.taylor.infra.ConnectionSupplier;
 import br.com.taylor.utils.JdbcUtils;
 
 import java.sql.*;
@@ -12,12 +13,26 @@ import java.util.Collections;
 import java.util.List;
 
 public class JdbcTaskRepository implements TaskRepository{
+
+   private final ConnectionSupplier connectionSupplier;
+
+   // Construtor padrão usando ConnectionFactory - para PRODUÇÃO
+   public JdbcTaskRepository() {
+       this.connectionSupplier = ConnectionFactory::getConnection;
+   }
+
+    // Construtor alternativo para injetar um ConnectionSupplier - para TESTES
+    public JdbcTaskRepository(ConnectionSupplier connectionSupplier) {
+        this.connectionSupplier = connectionSupplier;
+    }
+
+
     @Override
     public List<Task> findAll() {
         String sql = "SELECT * FROM tasks";
         List<Task> tasks = new ArrayList<>();
 
-        try (Connection conn = ConnectionFactory.getConnection();
+        try (Connection conn = connectionSupplier.get();
              Statement stmt = conn.createStatement()) {
 
             ResultSet rs = stmt.executeQuery(sql);
@@ -46,7 +61,7 @@ public class JdbcTaskRepository implements TaskRepository{
     public Task save(Task task) {
         String sql = "INSERT INTO tasks (description, status, created_at, updated_at) VALUES (?,?,?,?)";
 
-        try (Connection conn = ConnectionFactory.getConnection();
+        try (Connection conn = connectionSupplier.get();
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             stmt.setString(1, task.getDescription());
@@ -68,7 +83,7 @@ public class JdbcTaskRepository implements TaskRepository{
     public boolean update(Long id, Task updateTask) {
         String sql = "UPDATE tasks SET description=?, status=?, updated_at=? WHERE id=?";
 
-        try (Connection conn = ConnectionFactory.getConnection();
+        try (Connection conn = connectionSupplier.get();
              PreparedStatement stmt = conn.prepareStatement(sql)){
 
             stmt.setString(1, updateTask.getDescription());
@@ -88,7 +103,7 @@ public class JdbcTaskRepository implements TaskRepository{
         String sql = "SELECT * FROM tasks WHERE id=?";
         Task task = null;
 
-        try (Connection conn = ConnectionFactory.getConnection();
+        try (Connection conn = connectionSupplier.get();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, id);
@@ -119,7 +134,7 @@ public class JdbcTaskRepository implements TaskRepository{
 
         String sql = "SELECT * FROM tasks WHERE status IN (" + placeholders + ")";
 
-        try (Connection conn = ConnectionFactory.getConnection();
+        try (Connection conn = connectionSupplier.get();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             for (int i = 0; i < taskStatus.size(); i++) {
@@ -145,16 +160,11 @@ public class JdbcTaskRepository implements TaskRepository{
         return tasks;
     }
 
-
-
-
-
-
     @Override
     public boolean delete(Long id) {
         String sql = "DELETE FROM tasks WHERE id=?";
 
-        try (Connection conn = ConnectionFactory.getConnection();
+        try (Connection conn = connectionSupplier.get();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setLong(1, id);
