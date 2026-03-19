@@ -1,6 +1,6 @@
 # 📋 Task Tracker API
 
-[![Java](https://img.shields.io/badge/Java-17+-orange.svg)](https://www.oracle.com/java/)
+[![Java](https://img.shields.io/badge/Java-21+-orange.svg)](https://www.oracle.com/java/)
 [![Maven](https://img.shields.io/badge/Maven-3.8+-blue.svg)](https://maven.apache.org/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -15,16 +15,16 @@ Este projeto foi criado como um exercício de aprendizado para entender profunda
 - **Múltiplas estratégias de persistência** (SQLite, PostgreSQL, JSON)
 - Padrões de projeto (Repository, Factory, Strategy)
 - Serialização/Deserialização manual de JSON
-- Testes automatizados (unitários e E2E)
+- Testes automatizados (unitários, de integração e E2E)
 - Interface web interativa com Kanban board drag-and-drop
 
 ## 🚀 Tecnologias Utilizadas
 
 ### Backend (Java)
-- **Java 17+**: Linguagem de programação principal
+- **Java 21**: Linguagem de programação principal
 - **com.sun.net.httpserver**: Servidor HTTP nativo do JDK
 - **Maven**: Gerenciador de dependências e build
-- **JUnit 5**: Framework para testes unitários
+- **JUnit 5**: Framework para testes
 - **JDBC**: API para conexão com bancos de dados
 
 ### Banco de Dados
@@ -39,7 +39,7 @@ Este projeto foi criado como um exercício de aprendizado para entender profunda
 - **Dark/Light Mode**: Alternância de tema claro/escuro
 
 ### Testes
-- **JUnit 5**: Testes unitários da camada de serviço
+- **JUnit 5**: Testes unitários e de integração da camada de serviço
 - **Playwright**: Testes E2E automatizados (TypeScript)
 
 ### DevOps
@@ -83,6 +83,8 @@ task-tracker/
 │   │           └── JsonUtils.java               # Utilitários JSON
 │   └── test/
 │       └── java/br/com/taylor/
+│           ├── integration/                     # Testes de integração
+│           │   └── TaskServiceIntegrationTest.java
 │           └── service/
 │               └── TaskServiceTest.java         # Testes unitários
 ├── public/
@@ -224,7 +226,7 @@ A escolha da persistência é feita através da `ConnectionFactory`, permitindo 
 ## 🚦 Como Executar
 
 ### Pré-requisitos
-- Java JDK 17 ou superior
+- Java JDK 21 ou superior
 - Maven 3.8+
 - Docker e Docker Compose (opcional)
 
@@ -265,9 +267,14 @@ http://localhost:8080
 
 ## 🧪 Testes
 
-O projeto inclui testes automatizados em duas camadas:
+O projeto inclui testes automatizados em três camadas:
 
 ### Testes Unitários (JUnit 5)
+```bash
+mvn test
+```
+
+### Testes de Integração (JUnit 5)
 ```bash
 mvn test
 ```
@@ -285,6 +292,7 @@ Os testes cobrem:
 - ✅ Exclusão de tarefas
 - ✅ Validação de entrada
 - ✅ Tratamento de erros
+- ✅ Integração com banco de dados (PostgreSQL/SQLite)
 
 ## 🔄 Changelog / Histórico de Mudanças
 
@@ -336,7 +344,7 @@ Este projeto demonstra conhecimento em:
 - ✅ **REST API**: Princípios RESTful, verbos HTTP, status codes
 - ✅ **Arquitetura em Camadas**: Separação de responsabilidades (Controller → Service → Repository)
 - ✅ **Persistência de Dados**: JDBC, SQLite, PostgreSQL, JSON
-- ✅ **Testes Automatizados**: TDD, testes unitários (JUnit) e E2E (Playwright)
+- ✅ **Testes Automatizados**: TDD, testes unitários (JUnit), testes de integração e E2E (Playwright)
 - ✅ **Versionamento**: Git Flow, branches, pull requests, conventional commits
 - ✅ **DevOps**: Docker, Docker Compose, CI/CD, GitHub Actions
 - ✅ **Frontend**: HTML5, CSS3, JavaScript, manipulação DOM, drag-and-drop
@@ -395,4 +403,3 @@ Projeto desenvolvido como parte dos estudos em desenvolvimento backend com Java,
 ### Dark Mode
 *Interface em modo escuro - alternância com um clique*
 <img width="799" height="641" alt="image" src="https://github.com/user-attachments/assets/f611a54c-057b-46b2-bdef-85782602a15a" />
-
