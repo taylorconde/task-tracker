@@ -4,6 +4,7 @@ import br.com.taylor.entity.Task;
 import br.com.taylor.enums.TaskStatus;
 import br.com.taylor.repository.TaskRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class TaskService {
@@ -20,7 +21,7 @@ public class TaskService {
             throw new IllegalArgumentException("Description cannot be empty");
         }
         if(task.getStatus() == null){
-            throw new IllegalArgumentException("Status cannot be empty");
+            throw new IllegalArgumentException("Status cannot be null");
         }
         return repository.save(task);
     }
@@ -39,16 +40,35 @@ public class TaskService {
 
         Task existing = this.findById(id);
 
+        Task toUpdate = new Task(
+                existing.getId(),
+                existing.getDescription(),
+                existing.getStatus(),
+                existing.getCreatedAt(),
+                existing.getUpdatedAt()
+        );
+
         if (newData.getDescription() != null)
             if (!newData.getDescription().isBlank())
-                existing.setDescription(newData.getDescription());
-            else throw new IllegalArgumentException("Description cannot be empty");
+                toUpdate.setDescription(newData.getDescription());
+            else throw new IllegalArgumentException("Description cannot be empty or blank");
 
-        if (newData.getStatus() != null) existing.setStatus(newData.getStatus());
+        if (newData.getStatus() != null) toUpdate.setStatus(newData.getStatus());
 
-        existing.touch();
+        toUpdate = new Task(
+                toUpdate.getId(),
+                toUpdate.getDescription(),
+                toUpdate.getStatus(),
+                toUpdate.getCreatedAt(),
+                LocalDateTime.now()
+        );
 
-        if (!repository.update(id, existing)) throw new RuntimeException();
+
+        if (!repository.update(id, toUpdate)) throw new RuntimeException("Falha ao atualizar tarefa com ID: " + id);
+
+        existing.setDescription(toUpdate.getDescription());
+        existing.setStatus(toUpdate.getStatus());
+        existing.setUpdatedAt(toUpdate.getUpdatedAt());
 
         return existing;
     }

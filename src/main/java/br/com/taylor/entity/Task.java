@@ -10,7 +10,7 @@ public class Task {
     private int id;
     private String description;
     private TaskStatus status;
-    private LocalDateTime createdAt;
+    private final LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
 
@@ -44,6 +44,7 @@ public class Task {
     public void setStatus(TaskStatus status){
         this.status = status;
     }
+    public void setUpdatedAt(LocalDateTime updatedAt){this.updatedAt = updatedAt;}
 
     public LocalDateTime getCreatedAt() { return  createdAt;}
     public LocalDateTime getUpdatedAt() { return  updatedAt;}
