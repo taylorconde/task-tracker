@@ -151,8 +151,7 @@ POST /tasks
 Content-Type: application/json
 
 {
-  "title": "Estudar Java",
-  "description": "Revisar conceitos de POO",
+  "description": "Estudar Java",
   "status": "TODO"
 }
 ```
@@ -172,7 +171,6 @@ PUT /tasks/{id}
 Content-Type: application/json
 
 {
-  "title": "Estudar Java Avançado",
   "description": "Estudar Streams e Lambda",
   "status": "IN_PROGRESS"
 }
@@ -325,12 +323,11 @@ Os testes cobrem:
 ### Objeto Task (JSON)
 ```json
 {
-  "id": "550e8400-e29b-41d4-a716-446655440000",
-  "title": "Estudar Java",
-  "description": "Revisar conceitos de orientação a objetos",
+  "id": 1,
+  "description": "Estudar Java",
   "status": "TODO",
-  "createdAt": "2025-02-14T10:30:00Z",
-  "updatedAt": "2025-02-14T10:30:00Z"
+  "createdAt": "2025-02-14T10:30:00",
+  "updatedAt": "2025-02-14T10:30:00"
 }
 ```
 
